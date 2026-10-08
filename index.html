@@ -460,5 +460,33 @@ footer .heart{display:inline-block;animation:beat 1.8s ease-in-out infinite;colo
   });
 })();
 </script>
+
+<!-- xx-view-counter -->
+<div id="xx-counter" aria-label="浏览次数">🐾 被看过 <b id="xx-count">·</b> 次</div>
+<script>
+(function(){
+  var box=document.getElementById('xx-counter');
+  var num=document.getElementById('xx-count');
+  if(!box||!num) return;
+  try{
+    fetch('https://abacus.jasoncameron.dev/hit/xiaox-mimi/cat',{cache:'no-store'})
+      .then(function(r){return r.json()})
+      .then(function(d){ if(d&&typeof d.value==='number'){num.textContent=d.value;} })
+      .catch(function(){ box.style.display='none'; });
+  }catch(e){ box.style.display='none'; }
+})();
+</script>
+<style>
+#xx-counter{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:60;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:7px 13px;border-radius:999px;
+  font-size:12.5px;letter-spacing:.02em;color:#8a6f80;
+  background:rgba(255,255,255,.78);
+  -webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
+  border:1.2px solid rgba(255,255,255,.95);
+  box-shadow:0 8px 22px rgba(186,152,182,.22);
+  pointer-events:none;user-select:none}
+#xx-counter b{font-weight:600;color:#ff8fbc}
+</style>
 </body>
 </html>
