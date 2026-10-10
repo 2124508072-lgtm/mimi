@@ -83,8 +83,11 @@ body{
   box-shadow:var(--shadow-m),var(--edge);
 }
 .card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(133deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.3) 22%,
-    rgba(255,255,255,0) 42%,rgba(255,255,255,0) 66%,rgba(255,255,255,.58) 100%);}
+  background:
+    radial-gradient(36% 42% at var(--mx,20%) var(--my,12%),
+      rgba(255,255,255,.92),rgba(255,255,255,0) 72%),
+    linear-gradient(133deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.3) 22%,
+      rgba(255,255,255,0) 42%,rgba(255,255,255,0) 66%,rgba(255,255,255,.58) 100%);}
 .card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2.4px;
   pointer-events:none;
   background:linear-gradient(150deg,rgba(255,255,255,1),rgba(255,255,255,.06) 34%,
@@ -117,7 +120,13 @@ html.js .reveal.in{opacity:1;transform:none}
   82%{transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-9px) rotate(1.8deg) scale(1.03)}
 }
 .avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;
-  border:3px solid #fff;background:#f6eff4}
+  border:3px solid #fff;background:#f6eff4;
+  animation:blink 6.4s var(--spring-soft) infinite}
+@keyframes blink{
+  0%,90%,100%{transform:scaleY(1)}
+  93%{transform:scaleY(.72)}
+  95.5%{transform:scaleY(1)}
+}
 .avatar .dot{position:absolute;right:2px;bottom:6px;width:22px;height:22px;border-radius:50%;
   background:#fff;display:grid;place-items:center;font-size:11px;box-shadow:var(--shadow-s);
   animation:beat 2.2s ease-in-out infinite}
@@ -156,8 +165,9 @@ html.js .reveal.in{opacity:1;transform:none}
 
 /* ---------- 照片横滑 ---------- */
 .gallery{
-  display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
-  padding:8px 16px 20px;margin:0 -16px;
+  display:flex;gap:14px;overflow-x:auto;
+  scroll-snap-type:x proximity;
+  padding:24px 16px 32px;margin:0 -16px;
   -webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
 .gallery::-webkit-scrollbar{display:none}
@@ -168,7 +178,7 @@ html.js .reveal.in{opacity:1;transform:none}
   backdrop-filter:var(--blur);
   border:1px solid var(--line);
   box-shadow:0 8px 22px rgba(186,152,182,.18),var(--edge);
-  transform:rotate(var(--rot,0deg)) scale(var(--sc,1));
+  transform:translateY(var(--lift,0px)) rotate(var(--rot,0deg)) scale(var(--sc,1));
   opacity:var(--op,1);
   transition:transform .72s var(--spring),opacity .45s ease,box-shadow .45s ease;
   cursor:pointer;
@@ -184,7 +194,9 @@ html.js .reveal.in{opacity:1;transform:none}
 .shot:nth-child(9){--rot:-1.2deg}
 .shot:nth-child(10){--rot:1.4deg}
 .shot:nth-child(11){--rot:-1.3deg}
-.shot:active{transform:rotate(var(--rot,0deg)) scale(calc(var(--sc,1) * .8));
+.shot:nth-child(odd){--lift:-13px}
+.shot:nth-child(even){--lift:15px}
+.shot:active{transform:translateY(var(--lift,0px)) rotate(var(--rot,0deg)) scale(calc(var(--sc,1) * .8));
   box-shadow:var(--shadow-s);
   transition:transform .1s ease,box-shadow .1s ease}
 .shot .tag{
@@ -252,16 +264,81 @@ footer .heart{display:inline-block;animation:beat 1.8s ease-in-out infinite;colo
 .lb-in img{
   max-width:100%;max-height:88vh;border-radius:24px;display:block;margin:0 auto;cursor:zoom-in;
   box-shadow:var(--shadow-l);border:3px solid rgba(255,255,255,.9);
-  animation:zoomin .44s var(--spring) both;
 }
-@keyframes zoomin{from{transform:scale(.64) rotate(-3deg);opacity:0}
-  to{transform:scale(1) rotate(0deg);opacity:1}}
 .lb-in p{color:#fff;font-size:12.5px;line-height:1.9;margin:16px 6px 0;opacity:.92}
 .lb-in .tip{color:rgba(255,255,255,.6);font-size:11px;margin-top:6px;letter-spacing:1px}
 
 .dots{display:flex;justify-content:center;align-items:baseline;gap:4px;margin-top:-8px;
   font-size:12px;color:#c2a2b6;font-variant-numeric:tabular-nums}
 .dots b{font-size:15px;font-weight:700;color:#d6407f}
+
+/* ---------- 烟花 ---------- */
+.spark{position:fixed;pointer-events:none;z-index:120;font-size:16px;
+  will-change:transform,opacity;animation:sparkfly .82s var(--spring) forwards}
+@keyframes sparkfly{
+  0%{transform:translate(-50%,-50%) scale(.35);opacity:1}
+  100%{transform:translate(calc(-50% + var(--sx)),calc(-50% + var(--sy)))
+    scale(1.05) rotate(var(--sr));opacity:0}
+}
+
+/* ---------- 回顶 ---------- */
+#totop{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  z-index:60;width:46px;height:46px;border-radius:50%;
+  border:1px solid var(--line);background:var(--glass2);
+  -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  box-shadow:0 8px 22px rgba(186,152,182,.18),var(--edge);
+  display:grid;place-items:center;font-size:20px;cursor:pointer;
+  opacity:0;transform:translateY(18px) scale(.78);pointer-events:none;
+  transition:opacity .3s ease,transform .55s var(--spring)}
+#totop.on{opacity:1;transform:none;pointer-events:auto}
+#totop:active{transform:scale(.84);transition:transform .1s ease}
+
+/* ---------- 小提示 ---------- */
+#toast{position:fixed;left:50%;bottom:calc(78px + env(safe-area-inset-bottom,0px));
+  z-index:150;transform:translate(-50%,16px);opacity:0;pointer-events:none;
+  padding:9px 17px;border-radius:999px;font-size:12.5px;color:var(--ink);
+  background:var(--glass2);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  border:1px solid var(--line);box-shadow:0 8px 22px rgba(186,152,182,.22);
+  transition:opacity .26s ease,transform .45s var(--spring)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- 摇一摇 ---------- */
+.gallery.shake .shot{animation:shk .68s var(--spring-soft)}
+@keyframes shk{
+  0%,100%{transform:translateY(var(--lift,0px)) rotate(var(--rot,0deg)) scale(var(--sc,1))}
+  22%{transform:translateY(var(--lift,0px)) rotate(calc(var(--rot,0deg) + 3.6deg))
+    scale(calc(var(--sc,1) * 1.035))}
+  56%{transform:translateY(var(--lift,0px)) rotate(calc(var(--rot,0deg) - 3deg))
+    scale(calc(var(--sc,1) * .975))}
+  80%{transform:translateY(var(--lift,0px)) rotate(calc(var(--rot,0deg) + 1.5deg))
+    scale(var(--sc,1))}
+}
+
+/* ---------- 深色 ---------- */
+@media (prefers-color-scheme:dark){
+  :root{
+    --ink:#f2e6ef;
+    --soft:#bda8c6;
+    --line:rgba(255,255,255,.32);
+    --glass:linear-gradient(158deg,rgba(255,255,255,.19),rgba(255,255,255,.04));
+    --glass2:linear-gradient(158deg,rgba(255,255,255,.23),rgba(255,255,255,.07));
+    --edge:inset 0 2.8px 0 rgba(255,255,255,.72),inset 0 -2.8px 0 rgba(255,255,255,.2),
+      inset 0 0 0 2px rgba(255,255,255,.5);
+  }
+  body{background:#171122}
+  .bg{background:linear-gradient(150deg,#5a0f3c 0%,#0f1f52 36%,#4d2410 70%,#0a3a2a 100%)}
+  .hero h1{color:#ff9ecb}
+  .plate b{color:#ff9ecb}
+  .sec>h2::after{background:linear-gradient(90deg,rgba(255,255,255,.24),rgba(255,255,255,0))}
+  .chip .k{color:#f0dcea}
+  .chip em{color:#c0a9c9}
+  .shot .tag{color:#ff9ecb;background:rgba(255,255,255,.14)}
+  .shot .zoom{color:#d8c2dd;background:rgba(0,0,0,.34)}
+  .dots{color:#a893b4}
+  .dots b{color:#ff9ecb}
+  footer{color:#9c88ab}
+  .lightbox{background:rgba(12,6,16,.86)}
+}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;
@@ -279,6 +356,9 @@ footer .heart{display:inline-block;animation:beat 1.8s ease-in-out infinite;colo
   <div class="blob b4"></div>
 </div>
 <div class="floaty" id="floaty"></div>
+
+<div id="totop" aria-label="回到顶部">🐾</div>
+<div id="toast" role="status"></div>
 
 <div class="wrap">
 
@@ -509,9 +589,72 @@ footer .heart{display:inline-block;animation:beat 1.8s ease-in-out infinite;colo
     chips.forEach(function(el){ el.classList.add('in'); });
   }
 
-  var pawCount = 0, pawReset = null;
+  /* 玻璃上的光跟着手指走 */
+  if(!reduce){
+    [].forEach.call(document.querySelectorAll('.card'), function(cd){
+      cd.addEventListener('pointermove', function(e){
+        var r = cd.getBoundingClientRect();
+        if(!r.width) return;
+        cd.style.setProperty('--mx', (((e.clientX - r.left)/r.width)*100).toFixed(1)+'%');
+        cd.style.setProperty('--my', (((e.clientY - r.top)/r.height)*100).toFixed(1)+'%');
+      }, {passive:true});
+    });
+  }
+
+  /* 小提示 */
+  var toastEl = document.getElementById('toast');
+  var toastT = null;
+  function toast(msg){
+    if(!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('on');
+    clearTimeout(toastT);
+    toastT = setTimeout(function(){ toastEl.classList.remove('on'); }, 1700);
+  }
+
+  /* 连点炸一小簇 */
+  function burst(x, y){
+    var chars = ['🐾','♡','✿','✨','🎀','⭐'];
+    for(var i=0;i<9;i++){
+      (function(){
+        var a = (Math.PI*2*i)/9 + Math.random()*.6;
+        var d = 44 + Math.random()*56;
+        var s = document.createElement('div');
+        s.className = 'spark';
+        s.textContent = chars[Math.floor(Math.random()*chars.length)];
+        s.style.left = x + 'px';
+        s.style.top = y + 'px';
+        s.style.fontSize = (12 + Math.random()*10).toFixed(1) + 'px';
+        s.style.setProperty('--sx', (Math.cos(a)*d).toFixed(1)+'px');
+        s.style.setProperty('--sy', (Math.sin(a)*d).toFixed(1)+'px');
+        s.style.setProperty('--sr', ((Math.random()*2-1)*190).toFixed(0)+'deg');
+        document.body.appendChild(s);
+        setTimeout(function(){ s.remove(); }, 880);
+      })();
+    }
+  }
+
+  /* 猫爪回顶 */
+  var totop = document.getElementById('totop');
+  window.addEventListener('scroll', function(){
+    if(!totop) return;
+    totop.classList.toggle('on', window.scrollY > 320);
+  }, {passive:true});
+  if(totop) totop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior: reduce ? 'auto' : 'smooth'});
+  });
+
+  var pawCount = 0, pawReset = null, taps = [], burstOn = false;
   document.addEventListener('pointerdown', function(e){
     if(reduce) return;
+    taps.push(Date.now());
+    while(taps.length && Date.now() - taps[0] > 800) taps.shift();
+    if(taps.length >= 3 && !burstOn){
+      burstOn = true;
+      taps.length = 0;
+      burst(e.clientX, e.clientY);
+      setTimeout(function(){ burstOn = false; }, 700);
+    }
     if(pawCount > 6) return;
     pawCount++;
     clearTimeout(pawReset);
@@ -580,8 +723,24 @@ footer .heart{display:inline-block;animation:beat 1.8s ease-in-out infinite;colo
     lb.classList.add('closing');
     setTimeout(resetLb, 470);
   }
+  var suppressClick = false;
   shots.forEach(function(fig){
+    var holdT = null;
+    fig.addEventListener('pointerdown', function(){
+      clearTimeout(holdT);
+      holdT = setTimeout(function(){
+        suppressClick = true;
+        var im = fig.querySelector('img');
+        var url = im.currentSrc || im.src;
+        toast('图在这儿 长按可以存到相册');
+        try{ window.open(url, '_blank'); }catch(err){}
+      }, 640);
+    }, {passive:true});
+    ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+      fig.addEventListener(ev, function(){ clearTimeout(holdT); }, {passive:true});
+    });
     fig.addEventListener('click', function(){
+      if(suppressClick){ suppressClick = false; return; }
       var img = fig.querySelector('img');
       fromRect = fig.getBoundingClientRect();
       lbimg.src = img.currentSrc || img.src;
@@ -589,11 +748,30 @@ footer .heart{display:inline-block;animation:beat 1.8s ease-in-out infinite;colo
       setZoom(false);
       closing = false;
       lb.classList.remove('closing');
-      lbimg.style.transition = '';
+      lbimg.style.transition = 'none';
       lbimg.style.transform = '';
       lbimg.style.transformOrigin = '';
       lbimg.style.opacity = '';
       lb.classList.add('on');
+      if(reduce) return;
+      requestAnimationFrame(function(){
+        var r = lbimg.getBoundingClientRect();
+        if(!r.width || !fromRect || !fromRect.width){
+          lbimg.style.transition = '';
+          return;
+        }
+        var sx = fromRect.width / r.width, sy = fromRect.height / r.height;
+        lbimg.style.transformOrigin = 'top left';
+        lbimg.style.transform = 'translate(' + (fromRect.left - r.left).toFixed(1) + 'px,'
+          + (fromRect.top - r.top).toFixed(1) + 'px) scale('
+          + sx.toFixed(3) + ',' + sy.toFixed(3) + ')';
+        lbimg.style.opacity = '0';
+        requestAnimationFrame(function(){
+          lbimg.style.transition = 'transform .54s var(--spring),opacity .3s ease';
+          lbimg.style.transform = '';
+          lbimg.style.opacity = '';
+        });
+      });
     });
   });
   lbimg.addEventListener('click', function(e){
@@ -649,6 +827,42 @@ footer .heart{display:inline-block;animation:beat 1.8s ease-in-out infinite;colo
     }, {passive:true});
   } else {
     startOri();
+  }
+
+  /* 摇一摇 照片轻轻晃 */
+  var gEl = document.getElementById('gallery');
+  var lastShake = 0, lastX = 0, lastY = 0, lastZ = 0, haveLast = false;
+  function onMotion(e){
+    var a = e.accelerationIncludingGravity;
+    if(!a || !gEl) return;
+    var x = a.x || 0, y = a.y || 0, z = a.z || 0;
+    if(!haveLast){ lastX = x; lastY = y; lastZ = z; haveLast = true; return; }
+    var d = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+    lastX = x; lastY = y; lastZ = z;
+    var now = Date.now();
+    if(d > 34 && now - lastShake > 1400){
+      lastShake = now;
+      gEl.classList.remove('shake');
+      void gEl.offsetWidth;
+      gEl.classList.add('shake');
+      toast('喵 晃到了');
+      setTimeout(function(){ gEl.classList.remove('shake'); }, 760);
+    }
+  }
+  function startMotion(){
+    if(reduce || !window.DeviceMotionEvent) return;
+    window.addEventListener('devicemotion', onMotion, {passive:true});
+  }
+  if(typeof DeviceMotionEvent !== 'undefined'
+     && typeof DeviceMotionEvent.requestPermission === 'function'){
+    document.addEventListener('pointerdown', function once2(){
+      document.removeEventListener('pointerdown', once2);
+      DeviceMotionEvent.requestPermission().then(function(s){
+        if(s === 'granted') startMotion();
+      }).catch(function(){});
+    }, {passive:true});
+  } else {
+    startMotion();
   }
 })();
 </script>
