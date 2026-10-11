@@ -29,7 +29,9 @@
   --safe-b:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--bg);color-scheme:dark}
+html{background:var(--bg);color-scheme:dark;overflow-x:hidden;overflow-x:clip}
+body{overflow-x:clip}
+.lock{overflow:hidden;overflow:clip}
 body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);
   -webkit-font-smoothing:antialiased;overflow-x:hidden}
 button{font:inherit;color:inherit}
@@ -54,7 +56,8 @@ button{font:inherit;color:inherit}
 .note .head{display:flex;justify-content:space-between;font-size:15px;font-weight:600}
 .note .head span{font-size:13px;font-weight:400;color:var(--dim)}
 .note .msg{display:block;margin:2px 0 0;font-size:14px;line-height:1.45;color:rgba(243,233,220,.86)}
-.play{margin-top:14px;width:100%;max-width:400px;padding:14px 0;border:1px solid rgba(255,179,107,.55);
+.plays{margin-top:14px;width:100%;max-width:400px;display:flex;gap:10px}
+.play{flex:1;min-width:0;padding:14px 0;border:1px solid rgba(255,179,107,.55);
   border-radius:20px;background:rgba(255,179,107,.14);color:var(--warm);font-size:16px;font-weight:600;cursor:pointer;
   -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}
 .play:active{background:rgba(255,179,107,.26)}
@@ -164,7 +167,10 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
       <span class="msg">18 张照片 · 灰白长毛 白脸盘 粉鼻子</span>
     </span>
   </button>
-  <button class="play" id="play" type="button">🐟 玩接小鱼干</button>
+  <div class="plays">
+    <button class="play" id="play" type="button">🐟 接小鱼干</button>
+    <button class="play" id="jplay" type="button">🐾 跳柜子</button>
+  </div>
   <p class="swipe">往上滑 看照片</p>
   <span class="bar" aria-hidden="true"></span>
 </header>
@@ -350,7 +356,8 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
   咪咪 · 小x 建档 · 2026.10.01<br>
   <span id="xx-counter">被看过 <b id="xx-count">·</b> 次</span><br>
   点照片看大图 · 随手点一下会掉小爪印 🐾<br>
-  <button id="play2" class="foot-play" type="button">🐟 玩接小鱼干</button>
+  <button id="play2" class="foot-play" type="button">🐟 接小鱼干</button>
+  <button id="jplay2" class="foot-play" type="button">🐾 跳柜子</button><br>
   <button id="totop" type="button">回到锁屏</button>
 </footer>
 
@@ -364,10 +371,27 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
   <div class="g-panel" id="gpanel">
     <img src="data:image/jpeg;base64,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" alt="咪咪">
     <h2 id="gtitle">接小鱼干</h2>
-    <p id="gdesc">左右拖动咪咪 接住掉下来的小鱼干 🐟<br>金色的 ⭐ 一个顶五个<br>绿拖鞋 🩴 别接 漏掉小鱼干也要扣命</p>
+    <p id="gdesc">左右拖动咪咪 接住掉下来的<span style="color:#ffb36b">橙色小鱼干</span><br><span style="color:#ffd65a">金色星星</span>一个顶五个<br><span style="color:#b8e04a">绿拖鞋</span>别接 漏掉小鱼干也扣命</p>
     <p class="big" id="gbig" hidden></p>
     <p id="gbest"></p>
     <button class="g-go" id="ggo" type="button">开始</button>
+  </div>
+</div>
+
+<div class="game" id="jgame" role="dialog" aria-modal="true" aria-label="跳柜子">
+  <canvas id="jcv"></canvas>
+  <div class="g-hud">
+    <span class="score" id="jscore" aria-live="polite">0</span>
+    <span class="lives">&nbsp;</span>
+    <button class="g-close" id="jclose" type="button">关闭</button>
+  </div>
+  <div class="g-panel" id="jpanel">
+    <img src="data:image/jpeg;base64,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" alt="咪咪">
+    <h2 id="jtitle">跳柜子</h2>
+    <p id="jdesc">上面的台子会左右滑<br>看准了点一下屏幕 咪咪就往上跳<br>落到台子上加一分 踩空就掉下去啦</p>
+    <p class="big" id="jbig" hidden></p>
+    <p id="jbest"></p>
+    <button class="g-go" id="jgo" type="button">开始</button>
   </div>
 </div>
 
@@ -421,7 +445,7 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
   /* 爪印 */
   var pawN = 0, pawT = null;
   document.addEventListener('pointerdown', function(e){
-    if(reduce || pawN > 4 || document.getElementById('game').classList.contains('on')) return;
+    if(reduce || pawN > 4 || document.querySelector('.game.on')) return;
     pawN++; clearTimeout(pawT); pawT = setTimeout(function(){ pawN = 0; }, 600);
     var p = document.createElement('div');
     p.className = 'paw'; p.textContent = '🐾';
@@ -487,6 +511,7 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
       desc = document.getElementById('gdesc'), big = document.getElementById('gbig'),
       best = document.getElementById('gbest'), go = document.getElementById('ggo');
   var face = new Image(); face.src = panel.querySelector('img').src;
+  var DESC = desc.innerHTML;
   var W = 0, H = 0, dpr = 1, running = false, raf = 0, last = 0;
   var cat, items, pops, score, lives, t, spawnIn, speed;
   function getBest(){ try{ return +localStorage.getItem('mimi-fish-best') || 0; }catch(e){ return 0; } }
@@ -513,7 +538,6 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
     items.push({kind: kind, x: 24 + Math.random() * (W - 48), y: -30,
       v: speed * (.85 + Math.random() * .35), rot: (Math.random() - .5) * 2, a: 0});
   }
-  var EMO = {fish: '🐟', gold: '⭐', shoe: '🩴'};
   function step(dt){
     t += dt;
     speed = 170 + t * 6;
@@ -544,11 +568,26 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
     g.addColorStop(0, 'rgba(255,179,107,.28)'); g.addColorStop(1, 'rgba(255,179,107,0)');
     cx.fillStyle = g; cx.fillRect(0, 0, W, H);
     cx.textAlign = 'center'; cx.textBaseline = 'middle';
-    cx.font = '30px -apple-system,"Apple Color Emoji","Segoe UI Emoji",sans-serif';
     items.forEach(function(it){
       cx.save(); cx.translate(it.x, it.y); cx.rotate(it.a);
-      if(it.kind === 'gold'){ cx.shadowColor = 'rgba(255,200,90,.9)'; cx.shadowBlur = 18; }
-      cx.fillText(EMO[it.kind], 0, 0); cx.restore();
+      if(it.kind === 'fish'){
+        cx.shadowColor = 'rgba(255,179,107,.7)'; cx.shadowBlur = 12; cx.fillStyle = '#ffb36b';
+        cx.beginPath(); cx.ellipse(-3, 0, 15, 8, 0, 0, Math.PI * 2); cx.fill();
+        cx.beginPath(); cx.moveTo(9, 0); cx.lineTo(20, -9); cx.lineTo(20, 9); cx.closePath(); cx.fill();
+        cx.shadowBlur = 0; cx.fillStyle = '#2a1a0a';
+        cx.beginPath(); cx.arc(-11, -2, 2, 0, Math.PI * 2); cx.fill();
+      } else if(it.kind === 'gold'){
+        cx.shadowColor = 'rgba(255,214,90,.95)'; cx.shadowBlur = 20; cx.fillStyle = '#ffd65a';
+        cx.beginPath();
+        for(var k = 0; k < 10; k++){ var rr = k % 2 ? 7 : 17, an = -Math.PI / 2 + k * Math.PI / 5; cx.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); }
+        cx.closePath(); cx.fill();
+      } else {
+        cx.fillStyle = '#b8e04a'; cx.shadowColor = 'rgba(184,224,74,.5)'; cx.shadowBlur = 10;
+        cx.beginPath(); cx.ellipse(0, 0, 10, 18, 0, 0, Math.PI * 2); cx.fill();
+        cx.shadowBlur = 0; cx.fillStyle = '#5c7a12';
+        cx.beginPath(); cx.ellipse(0, -6, 7, 7, 0, 0, Math.PI * 2); cx.fill();
+      }
+      cx.restore();
     });
     cx.save(); cx.beginPath(); cx.arc(cat.x, cat.y, cat.r, 0, Math.PI * 2); cx.closePath();
     cx.shadowColor = 'rgba(255,179,107,.6)'; cx.shadowBlur = 24; cx.fillStyle = '#2a2520'; cx.fill();
@@ -590,7 +629,7 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
     running = false; paused = false; cancelAnimationFrame(raf);
     game.classList.remove('on'); document.body.style.overflow = '';
     title.textContent = '接小鱼干'; big.hidden = true; go.textContent = '开始';
-    desc.innerHTML = '左右拖动咪咪 接住掉下来的小鱼干 🐟<br>金色的 ⭐ 一个顶五个<br>绿拖鞋 🩴 别接 漏掉小鱼干也要扣命';
+    desc.innerHTML = DESC;
     panel.hidden = false; opener.focus(); opener = clock;
   }
   var paused = false;
@@ -618,6 +657,156 @@ footer b{color:var(--dim);font-weight:500;font-variant-numeric:tabular-nums}
       paused = true;
       title.textContent = '暂停中'; desc.textContent = '咪咪在等你'; go.textContent = '继续';
       panel.hidden = false;
+    }
+  });
+})();
+</script>
+
+<script>
+/* 跳柜子 */
+(function(){
+  var game = document.getElementById('jgame'), cv = document.getElementById('jcv'), cx = cv.getContext('2d');
+  var elScore = document.getElementById('jscore'), panel = document.getElementById('jpanel'),
+      title = document.getElementById('jtitle'), desc = document.getElementById('jdesc'),
+      big = document.getElementById('jbig'), best = document.getElementById('jbest'), go = document.getElementById('jgo');
+  var DESC = desc.innerHTML, face = new Image(); face.src = panel.querySelector('img').src;
+  var KINDS = [
+    {name: '洗衣机', top: '#7a7d82', side: '#55585c'},
+    {name: '床头', top: '#a9cbe0', side: '#7b9fb5'},
+    {name: '灰柜子', top: '#8f8a84', side: '#67625d'}
+  ];
+  var GAP = 120, D = .42, BLOCK = 56;
+  var W = 0, H = 0, dpr = 1, running = false, paused = false, raf = 0, last = 0, opener = null;
+  var plats, cur, next, cat, camY, camT, state, jt, score, n, pops;
+  function getBest(){ try{ return +localStorage.getItem('mimi-jump-best') || 0; }catch(e){ return 0; } }
+  function setBest(v){ try{ localStorage.setItem('mimi-jump-best', v); }catch(e){} }
+  function size(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = game.clientWidth; H = game.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function sy(y){ return H - (y - camY); }
+  function spawn(){
+    n++;
+    var w = Math.max(64, 150 - score * 4), sp = Math.min(380, 110 + score * 12);
+    var left = Math.random() < .5;
+    next = {x: left ? w / 2 : W - w / 2, y: cur.y + GAP, w: w, k: KINDS[n % 3], v: left ? sp : -sp, moving: true};
+    plats.push(next);
+    if(plats.length > 8) plats.shift();
+  }
+  function reset(){
+    score = 0; n = 0; pops = [];
+    cur = {x: W / 2, y: 140, w: 170, k: KINDS[0], v: 0, moving: false};
+    plats = [cur];
+    cat = {x: W / 2, y: cur.y, r: Math.max(24, Math.min(30, W * .07)), vy: 0, y0: 0};
+    camY = 0; camT = 0; state = 'idle';
+    spawn(); elScore.textContent = 0;
+  }
+  function jump(){
+    if(!running || state !== 'idle') return;
+    state = 'jump'; jt = 0; cat.y0 = cat.y; next.moving = false;
+  }
+  function step(dt){
+    if(next.moving){
+      next.x += next.v * dt;
+      if(next.x < next.w / 2){ next.x = next.w / 2; next.v = Math.abs(next.v); }
+      if(next.x > W - next.w / 2){ next.x = W - next.w / 2; next.v = -Math.abs(next.v); }
+    }
+    if(state === 'jump'){
+      jt += dt; var p = Math.min(1, jt / D);
+      cat.y = cat.y0 + GAP * p + 70 * 4 * p * (1 - p);
+      if(p >= 1){
+        if(Math.abs(cat.x - next.x) <= next.w / 2 + cat.r * .3){
+          cat.y = next.y; cur = next; score++; elScore.textContent = score;
+          pops.push({x: cat.x, y: cat.y + cat.r * 2.4, s: '+1', l: 1});
+          if(Math.abs(cat.x - cur.x) < 6) { score++; elScore.textContent = score; pops.push({x: cat.x, y: cat.y + cat.r * 3.4, s: '正中 +1', l: 1}); }
+          camT = cur.y - 140; state = 'idle'; spawn();
+        } else { state = 'fall'; cat.vy = 0; if(navigator.vibrate) navigator.vibrate(80); }
+      }
+    } else if(state === 'fall'){
+      cat.vy -= 1600 * dt; cat.y += cat.vy * dt;
+      if(sy(cat.y) > H + 80) end();
+    }
+    camY += (camT - camY) * Math.min(1, dt * 6);
+    for(var i = pops.length - 1; i >= 0; i--){ pops[i].l -= dt * 1.3; pops[i].y += dt * 40; if(pops[i].l <= 0) pops.splice(i, 1); }
+  }
+  function draw(){
+    cx.clearRect(0, 0, W, H);
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    plats.forEach(function(p){
+      var x = p.x - p.w / 2, y = sy(p.y);
+      if(y < -BLOCK - 10 || y > H + 10) return;
+      cx.fillStyle = p.k.side; cx.fillRect(x, y, p.w, BLOCK);
+      cx.fillStyle = p.k.top; cx.fillRect(x, y, p.w, 8);
+      cx.fillStyle = 'rgba(0,0,0,.45)'; cx.font = '600 14px -apple-system,"PingFang SC",sans-serif';
+      cx.fillText(p.k.name, p.x, y + BLOCK / 2 + 4);
+    });
+    var cy = sy(cat.y) - cat.r;
+    var g = cx.createRadialGradient(cat.x, cy, 6, cat.x, cy, cat.r * 3);
+    g.addColorStop(0, 'rgba(255,179,107,.3)'); g.addColorStop(1, 'rgba(255,179,107,0)');
+    cx.fillStyle = g; cx.fillRect(cat.x - cat.r * 3, cy - cat.r * 3, cat.r * 6, cat.r * 6);
+    cx.save(); cx.beginPath(); cx.arc(cat.x, cy, cat.r, 0, Math.PI * 2); cx.closePath();
+    cx.fillStyle = '#2a2520'; cx.fill(); cx.clip();
+    if(face.complete && face.naturalWidth) cx.drawImage(face, cat.x - cat.r, cy - cat.r, cat.r * 2, cat.r * 2);
+    cx.restore();
+    cx.strokeStyle = 'rgba(255,179,107,.8)'; cx.lineWidth = 2;
+    cx.beginPath(); cx.arc(cat.x, cy, cat.r, 0, Math.PI * 2); cx.stroke();
+    cx.font = '600 16px -apple-system,sans-serif'; cx.fillStyle = '#ffb36b';
+    pops.forEach(function(p){ cx.globalAlpha = Math.max(0, p.l); cx.fillText(p.s, p.x, sy(p.y)); });
+    cx.globalAlpha = 1;
+  }
+  function loop(ts){
+    if(!running) return;
+    var dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts;
+    step(dt); if(running) draw();
+    raf = requestAnimationFrame(loop);
+  }
+  function start(){
+    reset(); panel.hidden = true; running = true; last = performance.now();
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
+  }
+  function end(){
+    running = false; cancelAnimationFrame(raf);
+    var b = getBest(), nb = score > b; if(nb) setBest(score);
+    title.textContent = nb && score > 0 ? '新纪录' : '掉下去啦';
+    desc.textContent = '咪咪这回跳到';
+    big.hidden = false; big.textContent = score + ' 分';
+    best.textContent = '最高 ' + Math.max(b, score) + ' 分';
+    go.textContent = '再来一局'; panel.hidden = false; go.focus();
+  }
+  function openGame(btn){
+    opener = btn;
+    game.classList.add('on'); document.body.style.overflow = 'hidden';
+    size(); reset(); draw();
+    var b = getBest(); best.textContent = b ? '最高 ' + b + ' 分' : '';
+    go.focus();
+  }
+  function closeGame(){
+    running = false; paused = false; cancelAnimationFrame(raf);
+    game.classList.remove('on'); document.body.style.overflow = '';
+    title.textContent = '跳柜子'; desc.innerHTML = DESC; big.hidden = true; go.textContent = '开始';
+    panel.hidden = false; if(opener) opener.focus();
+  }
+  ['jplay', 'jplay2'].forEach(function(id){
+    var b = document.getElementById(id);
+    b.addEventListener('click', function(){ openGame(b); });
+  });
+  go.addEventListener('click', function(){
+    if(paused){ paused = false; panel.hidden = true; running = true; last = performance.now(); raf = requestAnimationFrame(loop); }
+    else start();
+  });
+  document.getElementById('jclose').addEventListener('click', closeGame);
+  cv.addEventListener('pointerdown', function(e){ e.preventDefault(); jump(); });
+  document.addEventListener('keydown', function(e){
+    if(!game.classList.contains('on')) return;
+    if(e.key === 'Escape') closeGame();
+    if((e.key === ' ' || e.key === 'ArrowUp') && running){ e.preventDefault(); jump(); }
+  });
+  window.addEventListener('resize', function(){ if(game.classList.contains('on')){ size(); if(!running) draw(); } });
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden && running){
+      running = false; paused = true; cancelAnimationFrame(raf);
+      title.textContent = '暂停中'; desc.textContent = '咪咪在等你'; go.textContent = '继续'; panel.hidden = false;
     }
   });
 })();
